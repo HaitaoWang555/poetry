@@ -10,11 +10,13 @@ public interface PoetryService {
 
     int createPoetry(PmsPoetryDto pmsPoetryDto);
 
-    int updatePoetry(Long id, PmsPoetryDto pmsPoetryDto);
+    int updatePoetry(int id, PmsPoetryDto pmsPoetryDto);
 
-    int deletePoetry(Long id);
+    int deletePoetry(int id);
 
     List<Poetry> listPoetry(int pageNum, int pageSize);
 
-    Poetry getPoetry(Long id);
+    List<Poetry> listPoetryWithBLOBs(int pageNum, int pageSize);
+
+    Poetry getPoetry(int id);
 }
