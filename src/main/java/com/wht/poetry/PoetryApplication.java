@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.wht.poetry.mapper")
+@MapperScan({"com.wht.poetry.mapper","com.wht.poetry.dao"})
 public class PoetryApplication {
 
 	public static void main(String[] args) {

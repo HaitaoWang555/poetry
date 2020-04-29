@@ -18,7 +18,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * 品牌管理示例controller
+ * 诗词管理controller
  */
 @Api(tags = "PoetryController", description = "诗词管理接口")
 @RequestMapping(value = "/api/poetry")
