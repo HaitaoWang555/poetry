@@ -6,6 +6,7 @@ import com.wht.poetry.mapper.PoetryMapper;
 import com.wht.poetry.model.Poetry;
 import com.wht.poetry.model.PoetryExample;
 import com.wht.poetry.service.PoetryService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -23,17 +24,22 @@ public class PoetryServiceImpl implements PoetryService {
 
     @Override
     public int createPoetry(PmsPoetryDto pmsPoetryDto) {
-        return 0;
+        Poetry poetry = new Poetry();
+        BeanUtils.copyProperties(pmsPoetryDto,poetry);
+        return poetryMapper.insertSelective(poetry);
     }
 
     @Override
     public int updatePoetry(int id, PmsPoetryDto pmsPoetryDto) {
-        return 0;
+        Poetry poetry = new Poetry();
+        BeanUtils.copyProperties(pmsPoetryDto,poetry);
+        poetry.setId(id);
+        return poetryMapper.updateByPrimaryKeySelective(poetry);
     }
 
     @Override
     public int deletePoetry(int id) {
-        return 0;
+        return poetryMapper.deleteByPrimaryKey(id);
     }
 
     @Override

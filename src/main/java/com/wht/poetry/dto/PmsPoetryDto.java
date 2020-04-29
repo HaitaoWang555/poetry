@@ -9,7 +9,6 @@ import javax.validation.constraints.NotNull;
  */
 public class PmsPoetryDto {
 
-    private Integer id;
     @ApiModelProperty(value = "诗词名称", required = true)
     @NotNull(message = "诗词名称不能为空")
     private String title;
@@ -25,14 +24,6 @@ public class PmsPoetryDto {
     @ApiModelProperty(value = "内容", required = true)
     @NotNull(message = "内容不能为空")
     private String content;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getTitle() {
         return title;
