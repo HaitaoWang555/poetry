@@ -34,7 +34,7 @@ public class EsPoetryController {
     }
 
     @ApiOperation(value = "根据id删除商品")
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult<Object> delete(@PathVariable Long id) {
         esPoetryService.delete(id);

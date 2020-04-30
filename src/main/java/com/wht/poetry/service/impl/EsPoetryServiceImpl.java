@@ -7,6 +7,8 @@ import com.wht.poetry.service.EsPoetryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.IndexQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -27,18 +29,43 @@ public class EsPoetryServiceImpl implements EsPoetryService {
     private EsPoetryDao esPoetryDao;
     @Resource
     private EsPoetryRepository esPoetryRepository;
-
+    @Resource
+    private ElasticsearchTemplate elasticsearchTemplate;
+    private static final String PERSON_INDEX_NAME = "pms";
+    private static final String PERSON_INDEX_TYPE = "poetry";
     @Override
     public int importAll() {
         List<EsPoetry> esPoetryList = esPoetryDao.getAllEsPoetryList(null);
-        Iterable<EsPoetry> esPoetryIterable = esPoetryRepository.saveAll(esPoetryList);
-        Iterator<EsPoetry> iterator = esPoetryIterable.iterator();
-        int result = 0;
-        while (iterator.hasNext()) {
-            result++;
-            iterator.next();
+        int counter = 0;
+        try {
+            if (!elasticsearchTemplate.indexExists(PERSON_INDEX_NAME)) {
+                elasticsearchTemplate.createIndex(PERSON_INDEX_TYPE);
+            }
+            List<IndexQuery> queries = new ArrayList<>();
+            for (EsPoetry esPoetry : esPoetryList) {
+                IndexQuery indexQuery = new IndexQuery();
+                indexQuery.setId(esPoetry.getId() + "");
+                indexQuery.setObject(esPoetry);
+                indexQuery.setIndexName(PERSON_INDEX_NAME);
+                indexQuery.setType(PERSON_INDEX_TYPE);
+
+                queries.add(indexQuery);
+                if (counter % 500 == 0) {
+                    elasticsearchTemplate.bulkIndex(queries);
+                    queries.clear();
+                    System.out.println("bulkIndex counter : " + counter);
+                }
+                counter++;
+            }
+            if (queries.size() > 0) {
+                elasticsearchTemplate.bulkIndex(queries);
+            }
+            System.out.println("bulkIndex completed.");
+        } catch (Exception e) {
+            System.out.println("IndexerService.bulkIndex e;" + e.getMessage());
+            throw e;
         }
-        return result;
+        return counter;
     }
 
     @Override
