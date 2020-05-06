@@ -37,5 +37,10 @@ public interface EsPoetryService {
      */
     Page<EsPoetry> search(String keyword, Integer pageNum, Integer pageSize);
 
+    /**
+     * 根据关键字搜索名称或者副标题
+     */
+    Page<EsPoetry> search(String title, String dynasty, String author, String content, Integer pageNum, Integer pageSize);
+
 
 }

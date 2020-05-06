@@ -31,7 +31,7 @@ public class EsPoetryServiceImpl implements EsPoetryService {
     private EsPoetryRepository esPoetryRepository;
     @Resource
     private ElasticsearchTemplate elasticsearchTemplate;
-    private static final String PERSON_INDEX_NAME = "pms";
+    private static final String PERSON_INDEX_NAME = "culture";
     private static final String PERSON_INDEX_TYPE = "poetry";
     @Override
     public int importAll() {
@@ -101,6 +101,12 @@ public class EsPoetryServiceImpl implements EsPoetryService {
     public Page<EsPoetry> search(String keyword, Integer pageNum, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum, pageSize);
         return esPoetryRepository.findByTitleOrDynastyOrAuthorOrContent(keyword, keyword, keyword, keyword, pageable);
+    }
+
+    @Override
+    public Page<EsPoetry> search(String title, String dynasty, String author, String content, Integer pageNum, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+        return esPoetryRepository.findByTitleOrDynastyOrAuthorOrContent(title, dynasty, author, content, pageable);
     }
 
 }

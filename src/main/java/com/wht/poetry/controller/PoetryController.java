@@ -2,13 +2,16 @@ package com.wht.poetry.controller;
 
 import com.wht.poetry.api.CommonPage;
 import com.wht.poetry.api.CommonResult;
+import com.wht.poetry.domain.EsPoetry;
 import com.wht.poetry.dto.PmsPoetryDto;
 import com.wht.poetry.model.Poetry;
+import com.wht.poetry.service.EsPoetryService;
 import com.wht.poetry.service.PoetryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +30,8 @@ public class PoetryController {
 
     @Resource
     private PoetryService poetryService;
+    @Resource
+    private EsPoetryService esPoetryService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PoetryController.class);
 
@@ -41,11 +46,20 @@ public class PoetryController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult getPoetryList(
-            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+            @RequestParam(value = "title", defaultValue = "", required = false) String title,
+            @RequestParam(value = "dynasty", defaultValue = "", required = false) String dynasty,
+            @RequestParam(value = "author", defaultValue = "", required = false) String author,
+            @RequestParam(value = "content", defaultValue = "", required = false) String content,
+            @RequestParam(value = "current", defaultValue = "1") Integer pageNum,
             @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize
     ) {
-        List<Poetry> poetryList = poetryService.listPoetryWithBLOBs(pageNum, pageSize);
-        return CommonResult.success(CommonPage.restPage(poetryList));
+        if (title.equals("") &&dynasty.equals("") &&author.equals("") &&content.equals("")) {
+            List<Poetry> poetryList = poetryService.listPoetryWithBLOBs(pageNum, pageSize);
+            return CommonResult.success(CommonPage.restPage(poetryList));
+        } else {
+            Page<EsPoetry> esProductPage = esPoetryService.search(title, dynasty, author, content, pageNum-1, pageSize);
+            return CommonResult.success(CommonPage.restPage(esProductPage));
+        }
     }
 
     @ApiOperation(value = "根据ID获取诗词")
